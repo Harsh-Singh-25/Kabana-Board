@@ -1,104 +1,413 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
 html, body {
-    height:100%;
+    height: 100%;
     width: 100%;
 }
+
+:root{
+    /* Surfaces */
+    --bg-color: #14131a;            /* page background */
+    --bg-button-color: #1d1c25;     /* column / panel surface */
+    --bg-task-color: #262531;       /* card surface */
+    --bg-task-hover: #2f2e3b;       /* card hover surface */
+    --border-color: #34323f;        /* hairline borders */
+
+    /* Text */
+    --primary-text-color: #ECEAF0;
+    --secondary-text-color: #9b97a8;
+    --muted-text-color: #6f6c7d;
+
+    /* Accent (brass) */
+    --accent-color: #c9974c;
+    --accent-color-hover: #dba968;
+    --accent-color-soft: rgba(201, 151, 76, 0.14);
+
+    /* Status colors (column identity) */
+    --status-todo: #9aa1ad;
+    --status-progress: var(--accent-color);
+    --status-done: #4caf82;
+
+    /* Status / destructive */
+    --delete-color: #e0635c;
+    --delete-color-hover: #c94f49;
+    --delete-color-soft: rgba(224, 99, 92, 0.12);
+
+    /* Motion */
+    --ease: cubic-bezier(0.19, 1, 0.22, 1);
+
+    /* Padding */
+    --nav-padding: 16px 32px;
+    --section-padding: 20px 32px;
+    --padding-s: 8px;
+    --padding-m: 12px;
+    --padding-l: 16px;
+    --padding-xl: 20px;
+    --padding-xxl: 30px;
+
+    /* Border radius */
+    --border-radius-s: 6px;
+    --border-radius-m: 10px;
+    --border-radius-l: 14px;
+    --border-radius-xl: 20px;
+    --border-radius-xxl: 28px;
+
+    /* Elevation */
+    --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-m: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --shadow-l: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+body{
+    background-color: var(--bg-color);
+    color: var(--primary-text-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
 main{
     height: 100%;
     display: flex;
     flex-direction: column;
     background-color: var(--bg-color);
 }
-:root{
-    --bg-color: black;
-    --bg-button-color: rgb(28, 28, 29);
-    --bg-task-color: #3b3a3a;
-    --primary-text-color: aliceblue;
-    --delete-color: #ff4d4d;
 
-    /* Padding */
-    --nav-padding: 15px 30px;
-    --section-padding: 15px 30px;
-    --padding-s: 5px;
-    --padding-m: 10px;
-    --padding-l: 15px;
-    --padding-xl: 20px;
-    --padding-xxl: 30px;
-
-    /* Border */
-    --border-radius-s: 5px;
-    --border-radius-m: 10px;
-    --border-radius-l: 15px;
-    --border-radius-xl: 20px;
-    --border-radius-xxl: 30px;
-
+/* Focus visibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible{
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
 }
-body{
-    background-color: var(--bg-color);
-    color: var(--primary-text-color)
+
+/* Custom scrollbars */
+*{
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
 }
+*::-webkit-scrollbar{
+    width: 8px;
+    height: 8px;
+}
+*::-webkit-scrollbar-thumb{
+    background-color: var(--border-color);
+    border-radius: var(--border-radius-s);
+}
+*::-webkit-scrollbar-thumb:hover{
+    background-color: var(--secondary-text-color);
+}
+
+/* ==========================================================================
+   Nav
+   ========================================================================== */
 nav{
-    padding: var(--padding-l);
+    padding: var(--nav-padding);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-color);
 }
-nav button{
-    background-color: var(--bg-button-color);
-    border: none;
+
+nav .left{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+nav .left::before{
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background-color: var(--accent-color);
+}
+
+nav .right{
+    display: flex;
+    align-items: center;
+    gap: var(--padding-m);
+}
+
+nav button,
+#toggle-modal{
+    background-color: var(--accent-color);
+    border: 1px solid var(--accent-color);
     outline: none;
-    color: var(--primary-text-color);
+    color: #1a1610;
+    font: inherit;
+    font-weight: 600;
     padding: var(--padding-m) var(--padding-l);
     cursor: pointer;
     border-radius: var(--border-radius-m);
+    transition: background-color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+nav button:hover,
+#toggle-modal:hover{
+    background-color: var(--accent-color-hover);
+}
+nav button:active,
+#toggle-modal:active{
+    transform: scale(0.97);
 }
 
-section{
+/* ==========================================================================
+   Board / Columns
+   ========================================================================== */
+section.board{
     padding: var(--section-padding);
     display: flex;
     flex-grow: 1;
     justify-content: space-between;
     background-color: var(--bg-color);
     gap: var(--padding-xxl);
+    overflow-x: auto;
 }
-section .task-column{
+
+.task-column{
     background-color: var(--bg-button-color);
-    flex-grow: 1;
-    padding: var(--border-radius-m);
+    border: 1px solid var(--border-color);
+    border-top: 3px solid var(--border-color);
+    flex: 1;
+    min-width: 260px;
+    padding: var(--padding-l);
     display: flex;
     flex-direction: column;
     gap: var(--padding-m);
-    border-radius: var(--border-radius-m);
-    transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-}
-section .task-column.hover-over {
-    border: 2px dashed var(--primary-text-color);
-    scale: 1.05;
+    border-radius: var(--border-radius-l);
+    transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), transform 0.4s var(--ease), background-color 0.4s var(--ease);
 }
 
-section .task-column .heading{
+/* Status identity per column */
+#todo{ border-top-color: var(--status-todo); }
+#progress{ border-top-color: var(--status-progress); }
+#done{ border-top-color: var(--status-done); }
+
+.task-column.hover-over {
+    border: 2px dashed var(--accent-color);
+    background-color: var(--accent-color-soft);
+    box-shadow: var(--shadow-m);
+    transform: scale(1.02);
+}
+
+.task-column .heading{
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-bottom: var(--padding-s);
+    border-bottom: 1px solid var(--border-color);
 }
-section .task-column .task{
+
+.task-column .heading .left{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    color: var(--secondary-text-color);
+}
+.task-column .heading .left::before{
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--border-color);
+}
+#todo .heading .left::before{ background-color: var(--status-todo); }
+#progress .heading .left::before{ background-color: var(--status-progress); }
+#done .heading .left::before{ background-color: var(--status-done); }
+
+.task-column .heading .right{
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 999px;
     background-color: var(--bg-task-color);
+    border: 1px solid var(--border-color);
+    color: var(--secondary-text-color);
+}
+
+/* ==========================================================================
+   Task cards
+   ========================================================================== */
+.task-column .task{
+    background-color: var(--bg-task-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-s);
+    padding: var(--padding-m);
+    box-shadow: var(--shadow-s);
+    cursor: grab;
+    transition: background-color 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.task-column .task:hover{
+    background-color: var(--bg-task-hover);
+    box-shadow: var(--shadow-m);
+    transform: translateY(-1px);
+}
+.task-column .task:active{
+    cursor: grabbing;
+}
+
+.task-column .task h2{
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-text-color);
+}
+.task-column .task p{
+    font-size: 0.85rem;
+    color: var(--secondary-text-color);
+}
+
+.task-column .task button{
+    align-self: flex-end;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: var(--padding-s) var(--padding-m);
+    border-radius: var(--border-radius-s);
+    border: 1px solid transparent;
+    outline: none;
+    background-color: var(--delete-color-soft);
+    color: var(--delete-color);
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.task-column .task button:hover{
+    background-color: var(--delete-color);
+    color: #fff;
+}
+
+/* ==========================================================================
+   Modal — .modal.add-new-task
+   ========================================================================== */
+.modal{
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+.modal.active{
+    display: flex;
+}
+
+.modal .bg{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(8, 7, 11, 0.6);
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+}
+
+.modal .center{
+    background-color: var(--bg-button-color);
+    border: 1px solid var(--border-color);
+    padding: var(--padding-xl);
     border-radius: var(--border-radius-l);
     display: flex;
     flex-direction: column;
-    padding: var(--padding-s);
+    gap: var(--padding-m);
+    width: min(420px, 90vw);
+    box-shadow: var(--shadow-l);
+    z-index: 10;
+    animation: modal-in 0.25s var(--ease);
 }
-section .task-column .task button{
-    align-self: flex-end;
-    cursor: pointer;
-    padding: var(--padding-s) var(--padding-m);
+
+@keyframes modal-in{
+    from{
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal .center input,
+.modal .center textarea{
+    background-color: var(--bg-task-color);
+    border: 1px solid var(--border-color);
+    outline: none;
+    color: var(--primary-text-color);
+    font: inherit;
+    padding: var(--padding-m);
     border-radius: var(--border-radius-s);
+    transition: border-color 0.2s var(--ease);
+}
+.modal .center input::placeholder,
+.modal .center textarea::placeholder{
+    color: var(--muted-text-color);
+}
+.modal .center input:focus,
+.modal .center textarea:focus{
+    border-color: var(--accent-color);
+}
+#task-desc-input{
+    resize: vertical;
+    min-height: 90px;
+}
+
+.modal .center button,
+.add-task-btn{
+    background-color: var(--accent-color);
     border: none;
     outline: none;
-    background-color: var(--delete-color);
+    color: #1a1610;
+    font: inherit;
+    font-weight: 600;
+    padding: var(--padding-m) var(--padding-xl);
+    cursor: pointer;
+    border-radius: var(--border-radius-m);
+    width: fit-content;
+    align-self: center;
+    transition: background-color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+.modal .center button:hover,
+.add-task-btn:hover{
+    background-color: var(--accent-color-hover);
+}
+.modal .center button:active,
+.add-task-btn:active{
+    transform: scale(0.97);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 768px){
+    :root{
+        --nav-padding: 12px 20px;
+        --section-padding: 16px 20px;
+    }
+    section.board{
+        flex-direction: column;
+        gap: var(--padding-l);
+    }
+    .task-column{
+        min-width: 100%;
+    }
 }
